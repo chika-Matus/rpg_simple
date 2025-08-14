@@ -1,0 +1,10 @@
+<h1>=== シンプルRPG ===</h1>
+<p><%= @player.name %>: HP <%= @player.hp %></p>
+<p><%= @enemy.name %>: HP <%= @enemy.hp %></p>
+
+<%= button_to "攻撃", battle_attack_path %>
+<%= button_to "回復", battle_heal_path %>
+
+<% if flash[:notice] %>
+  <p><%= flash[:notice] %></p>
+<% end %>
