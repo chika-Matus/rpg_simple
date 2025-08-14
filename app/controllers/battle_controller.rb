@@ -7,7 +7,7 @@ class BattleController < ApplicationController
   def attack
     # プレイヤー攻撃
     damage = rand(1..@player.attack)
-    @enemy.hp -= damage
+    @enemy.update(hp: @enemy.hp - damage)
     flash[:notice] = "勇者の攻撃！#{damage}ダメージ！"
 
     if @enemy.hp <= 0
@@ -16,14 +16,18 @@ class BattleController < ApplicationController
     else
       enemy_attack
     end
+
+    check_game_over
     redirect_to root_path
   end
 
   def heal
     heal_amount = rand(5..10)
-    @player.hp += heal_amount
+    @player.update(hp: @player.hp + heal_amount)
     flash[:notice] = "勇者は回復した！HPが#{heal_amount}回復！"
     enemy_attack
+
+    check_game_over
     redirect_to root_path
   end
 
@@ -36,11 +40,23 @@ class BattleController < ApplicationController
 
   def enemy_attack
     damage = rand(1..@enemy.attack)
-    @player.hp -= damage
+    @player.update(hp: @player.hp - damage)
     flash[:notice] += " #{@enemy.name}の攻撃！#{damage}ダメージ！"
   end
 
   def reset_enemy
     @enemy.update(hp: rand(10..30))
+  end
+
+  def reset_player
+    @player.update(hp: 30)
+  end
+
+  def check_game_over
+    if @player.hp <= 0
+      flash[:notice] += " 勇者は倒れた… ゲームオーバー！"
+      reset_player
+      reset_enemy
+    end
   end
 end
